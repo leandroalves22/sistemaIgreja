@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/template/template.xhtml">
+
+	<ui:define name="title">Início</ui:define>
+	<ui:define name="content">
+		<div class="ui-g layout-dashboard">
+			<div style="width: 250px">
+				<div class="stats-box sales">
+					<span class="statistics-header">MEMBROS</span>
+					<span class="statistics">
+						<p:outputLabel value="#{membroBean.contaMembros}"/>
+					</span>
+				</div>
+			</div>
+
+			<div style="width: 15px"></div>
+
+			<div style="width: 250px">
+				<div class="stats-box users">
+					<span class="statistics-header">BENS</span> 
+					<span class="statistics">
+						<p:outputLabel value="#{bemBean.contaBens}"/>
+					</span>
+				</div>
+			</div>
+
+			<div style="width: 15px"></div>
+
+			<div style="width: 250px">
+				<div class="stats-box views">
+					<span class="statistics-header">USUÁRIOS</span> 
+					<span class="statistics">
+						<p:outputLabel value="#{usuarioBean.contaUsuario}"/>
+					</span>
+				</div>
+			</div>
+			
+			<div style="width: 15px"></div>
+			
+			<div style="width: 250px">
+				<div class="stats-box sales">
+					<span class="statistics-header">NOTAS</span>
+					<span class="statistics">
+						<p:outputLabel value="#{notaBean.contaNotas}"/>
+					</span>
+				</div>
+			</div>
+
+			<div style="width: 400px"></div>			
+			
+		</div>
+
+		<br></br>
+
+		<div style="width: 700px">
+			<div id="j_idt158" class="ui-panel ui-widget ui-widget-content ui-corner-all global-sales" data-widget="widget_j_idt158">
+			<div id="j_idt158_header" class="ui-panel-titlebar ui-widget-header ui-helper-clearfix ui-corner-all">
+					<span class="ui-panel-title">ANIVERSARIANTES DO MÊS</span>
+					
+			</div>
+				<div id="j_idt158_content"
+					class="ui-panel-content ui-widget-content">
+					<p:dataTable id="tabela-membro" value="#{membroBean.aniversariantes}"
+						var="linha" emptyMessage="Nenhum aniversariante nesse mês!" rows="20"
+						paginator="true" paginatorPosition="bottom"
+						style="margin-top: 10px" selectionMode="single"
+						rowKey="#{linha.idMembro}" selection="#{membroBean.membroSelecao}">
+
+						<p:column headerText="Nome">
+							<h:outputText value="#{linha.nomeMembro}"
+								style="text-transform:uppercase" />
+						</p:column>
+
+						<p:column headerText="Data de Nascimento">
+							<h:outputText value="#{linha.dataNascimento}">
+								<f:convertDateTime pattern="dd/MM/yyyy"></f:convertDateTime>
+							</h:outputText>
+						</p:column>					
+					</p:dataTable>
+				</div>
+			</div>
+		</div>
+	</ui:define>
+</ui:composition>

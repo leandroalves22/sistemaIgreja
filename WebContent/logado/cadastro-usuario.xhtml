@@ -1,0 +1,134 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/template/template.xhtml">
+	
+	<ui:define name="title">Cadastro De Usuários</ui:define>
+	
+	<ui:define name="content">		
+		
+		<p:layoutUnit position="center" style="border: 0px;">
+		<p:panel header="Cadastro de Usuários" styleClass="painel">		
+			<p:growl autoUpdate="true"></p:growl>			
+			<h:form id="formUser">				
+				<p:toolbar id="menuUser">
+					<f:facet name="left">
+						<h:panelGrid columns="4">
+							
+							<p:outputPanel>
+								<p:commandButton resetValues="true" icon="fa fa-plus" action="#{usuarioBean.preparaCadastro}" value="Novo" title="Novo" 
+												 oncomplete="PF('janelaCadastro').show()" process="@this" update=":formCad:cadastro-dialog"/>								 
+							</p:outputPanel>
+							
+							<p:outputPanel>
+								<span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+							</p:outputPanel>							
+							<p:outputPanel>
+								
+								<p:commandButton value="Editar" icon="fa fa-edit" title="Editar" oncomplete="PF('janelaEdicao').show()" 
+												  process="@this" update=":formEdit:edicao-dialog">
+									<p:resetInput target=":formEdit:edicao-dialog"/>
+									<f:setPropertyActionListener value="#{usuarioBean.usuarioSelecao}" target="#{usuarioBean.usuarioEdicao}"/>
+								</p:commandButton>
+							</p:outputPanel>														
+							
+							<p:outputPanel>
+								<p:commandButton action="#{usuarioBean.excluir}" value="Excluir" title="Excluir" process="@this" 
+												 update=":formTab:tabela-user" icon="fa fa-trash" />																	
+							</p:outputPanel>
+							
+						</h:panelGrid>
+					</f:facet>
+				</p:toolbar>
+			</h:form>		
+			
+			<h:form id="formTab">				
+				<p:dataTable id="tabela-user" value="#{usuarioBean.todosUsuario}" var="linha" emptyMessage="Nenhum usuário cadastrado!" rows="10" paginator="true" paginatorPosition="bottom" style="margin-top: 10px"
+							selectionMode="single" rowKey="#{linha.idUsuario}" selection="#{usuarioBean.usuarioSelecao}" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {JumpToPageDropdown} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="[ Exibindo de {startRecord} a {endRecord} no total de {totalRecords} - Página: {currentPage}/{totalPages} ]">
+							
+							<p:ajax event="rowSelect" update=":formUser:menuUser" ></p:ajax> 
+							<p:ajax event="rowSelect" update=":formUser:menuUser"></p:ajax> 
+							<p:ajax event="rowUnselect" update=":formUser:menuUser"></p:ajax> 
+														
+							<p:column headerText="Nome" filterMatchMode="contains" filterBy="#{linha.nomeUsuario}">
+								<h:outputText value="#{linha.nomeUsuario}" style="text-transform:uppercase"/>
+							</p:column>							
+							
+							<p:column headerText="Login" filterMatchMode="contains" filterBy="#{linha.login}">
+								<h:outputText value="#{linha.login}" style="text-transform:uppercase"/>
+							</p:column>
+											
+				</p:dataTable>
+			</h:form>		
+			
+			<h:form id="formCad" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Novo Usuário" widgetVar="janelaCadastro" id="cadastro-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-user">
+						<p:tab title="Dados Principais">
+							<h:panelGrid columns="1">							
+								<p:outputLabel>
+									<p:outputLabel  value="Nome"/><br></br>
+									<p:inputText style="width: 655px; text-transform: uppercase" value="#{usuarioBean.usuarioEdicao.nomeUsuario}" required="true" requiredMessage="Nome obrigatório"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+						
+							<h:panelGrid columns="3">						
+								<p:outputLabel>
+									<p:outputLabel value="Login"/><br></br>
+									<p:inputText value="#{usuarioBean.usuarioEdicao.login}" required="true" requiredMessage="Login obrigatório" style="width: 250px;" />
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Senha"/><br></br>
+									<p:inputText value="#{usuarioBean.usuarioEdicao.senha}" required="true" requiredMessage="Senha obrigatória" type="password" style="width: 183px"/>
+								</p:outputLabel>												  	
+							</h:panelGrid>					
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{usuarioBean.salvar}" update=":formTab:tabela-user" />										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+			
+			<h:form id="formEdit" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Edição de Usuário" widgetVar="janelaEdicao" id="edicao-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-user">
+						<p:tab title="Dados Principais">
+							<h:panelGrid columns="1">							
+								<p:outputLabel>
+									<p:outputLabel  value="Nome"/><br></br>
+									<p:inputText style="width: 655px; text-transform: uppercase" value="#{usuarioBean.usuarioEdicao.nomeUsuario}" required="true" requiredMessage="Nome obrigatório"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+						
+							<h:panelGrid columns="3">						
+								<p:outputLabel>
+									<p:outputLabel value="Login"/><br></br>
+									<p:inputText value="#{usuarioBean.usuarioEdicao.login}" required="true" requiredMessage="Login obrigatório" style="width: 250px;"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Senha"/><br></br>
+									<p:inputText value="#{usuarioBean.usuarioEdicao.senha}" required="true" requiredMessage="Senha obrigatória" type="password" style="width: 183px"/>
+								</p:outputLabel>												  	
+							</h:panelGrid>					
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{usuarioBean.editar}" update=":formTab:tabela-user" />										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+								
+		</p:panel>
+		</p:layoutUnit>
+	</ui:define>
+</ui:composition>

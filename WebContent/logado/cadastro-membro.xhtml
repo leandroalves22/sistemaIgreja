@@ -1,0 +1,289 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/template/template.xhtml">
+	
+	<ui:define name="title">Cadastro De Membros</ui:define>
+	
+	<ui:define name="content">		
+		
+		<p:layoutUnit position="center" style="border: 0px;">
+		<p:panel header="Cadastro de Membros" styleClass="painel">		
+			<p:growl autoUpdate="true"></p:growl>			
+			<h:form id="formMembro">				
+				<p:toolbar id="menuMembro">
+					<f:facet name="left">
+						<h:panelGrid columns="5">
+							
+							<p:outputPanel>
+								<p:commandButton resetValues="true" icon="fa fa-plus" action="#{membroBean.preparaCadastro}" value="Novo" title="Novo" 
+												 oncomplete="PF('janelaCadastro').show()" process="@this" update=":formCad:cadastro-dialog"/>								 
+							</p:outputPanel>
+							
+							<p:outputPanel>
+								<span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+							</p:outputPanel>							
+							<p:outputPanel>
+								
+								<p:commandButton action="#{membroBean.preparaEdicao}" value="Editar" icon="fa fa-edit" title="Editar" oncomplete="PF('janelaEdicao').show()" 
+												  process="@this" update=":formEdit:edicao-dialog">
+									<p:resetInput target=":formEdit:edicao-dialog"/>
+									<f:setPropertyActionListener value="#{membroBean.membroSelecao}" target="#{membroBean.membroEdicao}"/>
+								</p:commandButton>
+							</p:outputPanel>														
+							
+							<p:outputPanel>
+								<p:commandButton action="#{membroBean.remover}" value="Excluir" title="Excluir" process="@this" 
+												 update=":formTab:tabela-membro" icon="fa fa-trash" />																	
+							</p:outputPanel>
+							
+							<p:outputPanel>
+								<p:commandButton icon="fa fa-file-excel-o" value="Baixar Aniversariantes do Mês" styleClass="mr-2 mb-2" ajax="false">
+									<p:dataExporter type="xls" target=":formNiver:tabela-niver" fileName="Aniversariantes"/>
+								</p:commandButton>												 								 
+							</p:outputPanel>							
+						</h:panelGrid>
+					</f:facet>
+				</p:toolbar>
+			</h:form>		
+			
+			<h:form id="formTab">				
+				<p:dataTable id="tabela-membro" value="#{membroBean.todosMembros}" var="linha" emptyMessage="Nenhum membro cadastrado!" rows="10" paginator="true" paginatorPosition="bottom" style="margin-top: 10px"
+							selectionMode="single" rowKey="#{linha.idMembro}" selection="#{membroBean.membroSelecao}" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {JumpToPageDropdown} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="[ Exibindo de {startRecord} a {endRecord} no total de {totalRecords} - Página: {currentPage}/{totalPages} ]">
+							
+							<p:ajax event="rowSelect" update=":formMembro:menuMembro" ></p:ajax> 
+							<p:ajax event="rowSelect" update=":formMembro:menuMembro"></p:ajax> 
+							<p:ajax event="rowUnselect" update=":formMembro:menuMembro"></p:ajax> 
+														
+							<p:column headerText="Nome" filterMatchMode="contains" filterBy="#{linha.nomeMembro}">
+								<h:outputText value="#{linha.nomeMembro}" style="text-transform:uppercase"/>
+							</p:column>							
+							
+							<p:column headerText="CPF" filterMatchMode="contains" filterBy="#{linha.cpf}">
+								<h:outputText value="#{linha.cpf}" style="text-transform:uppercase"/>
+							</p:column>											
+				</p:dataTable>
+			</h:form>
+			
+			<h:form rendered="false" id="formNiver">
+				<p:dataTable id="tabela-niver" value="#{membroBean.aniversariantes}" var="linha" emptyMessage="Nenhum aniversariante nesse mês!" 
+							 rows="20" paginator="true" paginatorPosition="bottom" style="margin-top: 10px" selectionMode="single"
+							 rowKey="#{linha.idMembro}" selection="#{membroBean.membroSelecao}">
+
+						<p:column headerText="Nome">
+							<h:outputText value="#{linha.nomeMembro}"
+								style="text-transform:uppercase" />
+						</p:column>
+
+						<p:column headerText="Data de Nascimento">
+							<h:outputText value="#{linha.dataNascimento}">
+								<f:convertDateTime pattern="dd/MM/yyyy"></f:convertDateTime>
+							</h:outputText>
+						</p:column>					
+				</p:dataTable>			
+			</h:form>		
+			
+			<h:form id="formCad" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Novo Membro" widgetVar="janelaCadastro" id="cadastro-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-membro">
+						<p:tab title="Dados Pessoais">
+							<h:panelGrid columns="1">							
+								<p:outputLabel>
+									<p:outputLabel  value="Nome"/><br></br>
+									<p:inputText style="width: 655px; text-transform: uppercase" value="#{membroBean.membroEdicao.nomeMembro}" required="true" requiredMessage="Nome obrigatório"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+						
+							<h:panelGrid columns="3">						
+								<p:outputLabel>
+									<p:outputLabel value="Data De Nascimento"/>
+									<p:calendar value="#{membroBean.membroEdicao.dataNascimento}" pattern="dd/MM/yyyy" mask="true" style="width: 175px" required="true" requiredMessage="Data de nascimento obrigatória"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="CPF"/>
+									<p:inputMask mask="999.999.999-99" value="#{membroBean.membroEdicao.cpf}" required="true" requiredMessage="Cpf obrigatório" style="width: 175px"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Membro Ativo?"/>
+									<p:selectOneMenu value="#{membroBean.membroEdicao.ativo}" required="true" requiredMessage="Situação do membro obrigatória">
+										<f:selectItem itemDisabled="true" itemLabel="SELECIONE UMA OPÇÃO"/>
+										<f:selectItem itemLabel="SIM" itemValue="SIM"/>
+										<f:selectItem itemLabel="NÃO" itemValue="NÃO"/>
+									</p:selectOneMenu>
+								</p:outputLabel>																				  	
+							</h:panelGrid>		
+							
+							<h:panelGrid columns="1">
+								<p:outputLabel>
+									<p:outputLabel value="#{membroBean.membroEdicao.motivoDesligamento}" style="width: 655px; text-transform: uppercase"/>
+								</p:outputLabel>							
+							</h:panelGrid>			
+						</p:tab>
+						
+						<p:tab title="Endereço">
+							<h:panelGrid columns="2">
+								<p:outputLabel>
+									<p:outputLabel value="logradouro"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.rua}" style="width: 472px; text-transform: uppercase" required="true" requiredMessage="Logradouro obrigatório"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Numero"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.numero}"/>
+								</p:outputLabel>								
+							</h:panelGrid>
+							
+							<h:panelGrid columns="1">
+								<p:outputLabel>
+									<p:outputLabel value="Complemento"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.complemento}" style="width: 655px; text-transform: uppercase"/>
+								</p:outputLabel>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Bairro"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.bairro}" style="width: 260px; text-transform: uppercase"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Cidade"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.cidade}" style="width: 210px; text-transform: uppercase"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="CEP"/>
+									<p:inputMask value="#{membroBean.enderecoEdicao.cep}" mask="99.999-999"/>
+								</p:outputLabel>
+							</h:panelGrid>							
+						</p:tab>
+						
+						<p:tab title="Contatos">
+							<h:panelGrid columns="2">
+								<p:outputLabel>
+									<p:outputLabel value="Celular"/>
+									<p:inputMask mask="99999-9999" value="#{membroBean.contatoEdicao.celular}"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Email"/>
+									<p:inputText value="#{membroBean.contatoEdicao.email}" style="width: 480px"/>
+								</p:outputLabel>
+							</h:panelGrid>
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{membroBean.salvar}" update=":formTab:tabela-membro" ajax="false" />										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+			
+			<h:form id="formEdit" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Edição De Membros" widgetVar="janelaEdicao" id="edicao-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-membro">
+						<p:tab title="Dados Pessoais">
+							<h:panelGrid columns="1">							
+								<p:outputLabel>
+									<p:outputLabel  value="Nome"/><br></br>
+									<p:inputText style="width: 655px; text-transform: uppercase" value="#{membroBean.membroEdicao.nomeMembro}" required="true" requiredMessage="Nome obrigatório"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+						
+							<h:panelGrid columns="3">						
+								<p:outputLabel>
+									<p:outputLabel value="Data De Nascimento"/>
+									<p:calendar value="#{membroBean.membroEdicao.dataNascimento}" pattern="dd/MM/yyyy" mask="true" style="width: 175px" required="true" requiredMessage="Data de nascimento obrigatória"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="CPF"/>
+									<p:inputMask mask="999.999.999-99" value="#{membroBean.membroEdicao.cpf}" required="true" requiredMessage="Cpf obrigatório" style="width: 175px"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Membro Ativo?"/>
+									<p:selectOneMenu value="#{membroBean.membroEdicao.ativo}" required="true" requiredMessage="Situação do membro obrigatória">
+										<f:selectItem itemDisabled="true" itemLabel="SELECIONE UMA OPÇÃO"/>
+										<f:selectItem itemLabel="SIM" itemValue="SIM"/>
+										<f:selectItem itemLabel="NÃO" itemValue="NÃO"/>
+									</p:selectOneMenu>
+								</p:outputLabel>																				  	
+							</h:panelGrid>		
+							
+							<h:panelGrid columns="1">
+								<p:outputLabel>
+									<p:outputLabel value="#{membroBean.membroEdicao.motivoDesligamento}" style="width: 655px; text-transform: uppercase"/>
+								</p:outputLabel>							
+							</h:panelGrid>			
+						</p:tab>
+						
+						<p:tab title="Endereço">
+							<h:panelGrid columns="2">
+								<p:outputLabel>
+									<p:outputLabel value="logradouro"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.rua}" style="width: 472px; text-transform: uppercase" required="true" requiredMessage="Logradouro obrigatório"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Numero"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.numero}"/>
+								</p:outputLabel>								
+							</h:panelGrid>
+							
+							<h:panelGrid columns="1">
+								<p:outputLabel>
+									<p:outputLabel value="Complemento"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.complemento}" style="width: 655px; text-transform: uppercase"/>
+								</p:outputLabel>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Bairro"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.bairro}" style="width: 260px; text-transform: uppercase"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Cidade"/>
+									<p:inputText value="#{membroBean.enderecoEdicao.cidade}" style="width: 210px; text-transform: uppercase"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="CEP"/>
+									<p:inputMask value="#{membroBean.enderecoEdicao.cep}" mask="99.999-999"/>
+								</p:outputLabel>
+							</h:panelGrid>							
+						</p:tab>
+						
+						<p:tab title="Contatos">
+							<h:panelGrid columns="2">
+								<p:outputLabel>
+									<p:outputLabel value="Celular"/>
+									<p:inputMask mask="99999-9999" value="#{membroBean.contatoEdicao.celular}"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Email"/>
+									<p:inputText value="#{membroBean.contatoEdicao.email}" style="width: 480px"/>
+								</p:outputLabel>
+							</h:panelGrid>
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{membroBean.editar}" update=":formTab:tabela-membro" />										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>								
+		</p:panel>
+		</p:layoutUnit>
+	</ui:define>
+</ui:composition>

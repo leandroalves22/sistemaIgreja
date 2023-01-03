@@ -1,0 +1,209 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/template/template.xhtml">
+	
+	<ui:define name="title">Cadastro De Bens</ui:define>
+	
+	<ui:define name="content">		
+		
+		<p:layoutUnit position="center" style="border: 0px;">
+		<p:panel header="Cadastro de Bens" styleClass="painel">		
+			<p:growl autoUpdate="true"></p:growl>			
+			<h:form id="formBem">				
+				<p:toolbar id="menuBem">
+					<f:facet name="left">
+						<h:panelGrid columns="6">
+							
+							<p:outputPanel>
+								<p:commandButton resetValues="true" icon="fa fa-plus" action="#{bemBean.preparaCadastro}" value="Novo" title="Novo" 
+												 oncomplete="PF('janelaCadastro').show()" process="@this" update=":formCad:cadastro-dialog"/>								 
+							</p:outputPanel>
+							
+							<p:outputPanel>
+								<span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+							</p:outputPanel>
+														
+							<p:outputPanel>								
+								<p:commandButton value="Editar" icon="fa fa-edit" title="Editar" oncomplete="PF('janelaEdicao').show()" 
+												  process="@this" update=":formEdit:edicao-dialog">
+									<p:resetInput target=":formEdit:edicao-dialog"/>
+									<f:setPropertyActionListener value="#{bemBean.bemSelecao}" target="#{bemBean.bemEdicao}"/>
+								</p:commandButton>
+							</p:outputPanel>														
+							
+							<p:outputPanel>
+								<p:commandButton action="#{bemBean.remover}" value="Excluir" title="Excluir" process="@this" 
+												 update=":formTab:tabela-bem" icon="fa fa-trash" />																	
+							</p:outputPanel>
+							
+							<p:outputPanel>
+								<span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+							</p:outputPanel>							
+							
+							<p:outputPanel>
+								<p:commandButton icon="fa fa-file-excel-o" value="Gerar Inventário" styleClass="mr-2 mb-2" ajax="false">
+									<p:dataExporter type="xls" target=":formTab:tabela-bem" fileName="bens"/>
+								</p:commandButton>												 								 
+							</p:outputPanel>							
+						</h:panelGrid>
+					</f:facet>
+				</p:toolbar>
+			</h:form>		
+			
+			<h:form id="formTab">				
+				<p:dataTable id="tabela-bem" value="#{bemBean.todosBens}" var="linha" emptyMessage="Nenhum bem cadastrado!" rows="10" paginator="true" paginatorPosition="bottom" style="margin-top: 10px"
+							selectionMode="single" rowKey="#{linha.idBem}" selection="#{bemBean.bemSelecao}" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {JumpToPageDropdown} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="[ Exibindo de {startRecord} a {endRecord} no total de {totalRecords} - Página: {currentPage}/{totalPages} ]">
+							
+							<p:ajax event="rowSelect" update=":formBem:menuBem" ></p:ajax> 
+							<p:ajax event="rowSelect" update=":formBem:menuBem"></p:ajax> 
+							<p:ajax event="rowUnselect" update=":formBem:menuBem"></p:ajax> 
+														
+							<p:column headerText="Descrição" filterMatchMode="contains" filterBy="#{linha.descricao}">
+								<h:outputText value="#{linha.descricao}" style="text-transform:uppercase"/>
+							</p:column>							
+							
+							<p:column headerText="Local" filterMatchMode="contains" filterBy="#{linha.localUso}">
+								<h:outputText value="#{linha.localUso}" style="text-transform:uppercase"/>
+							</p:column>
+							
+							<p:column headerText="Valor" filterMatchMode="contains" filterBy="#{linha.valorUnitarioBem}" visible="false">
+								<h:outputText value="#{linha.valorUnitarioBem}" style="text-transform:uppercase"/>
+							</p:column>
+							
+							<p:column headerText="Situação" filterMatchMode="contains" filterBy="#{linha.situacao}" visible="false">
+								<h:outputText value="#{linha.situacao}" style="text-transform:uppercase"/>
+							</p:column>
+							
+							<p:column headerText="Nota" filterMatchMode="contains" filterBy="#{linha.nota.numeroNota}">
+								<h:outputText value="#{linha.nota.numeroNota}" style="text-transform:uppercase"/>
+							</p:column>
+											
+				</p:dataTable>
+			</h:form>		
+			
+			<h:form id="formCad" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Novo Bem" widgetVar="janelaCadastro" id="cadastro-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-bem">
+						<p:tab title="Dados">
+							<h:panelGrid columns="1">							
+								<p:outputLabel>
+									<p:outputLabel  value="Descrição"/><br></br>
+									<p:inputText style="width: 655px; text-transform: uppercase" value="#{bemBean.bemEdicao.descricao}" required="true" requiredMessage="Descrição obrigatória"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Valor de Compra"/><br></br>
+									<p:inputNumber style="width: 300px; text-transform: uppercase" value="#{bemBean.bemEdicao.valorUnitarioBem}" 
+												   symbol="R$ " decimalSeparator="," thousandSeparator="."/>																
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Compra"/><br></br>
+							 		<p:calendar value="#{bemBean.bemEdicao.dataCompra}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+						    		<p:outputLabel value="Local de Uso"/>
+						    		<p:inputText style="width: 290px; text-transform: uppercase" value="#{bemBean.bemEdicao.localUso}" required="true" requiredMessage="Local de uso obrigatório"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Situação"/><br></br>
+									<p:selectOneMenu value="#{bemBean.bemEdicao.situacao}" required="true" requiredMessage="Situação do bem obrigatória">
+										<f:selectItem itemLabel="SELECIONE UMA OPÇÃO" itemDisabled="true"/>
+										<f:selectItem itemLabel="ATIVO" itemValue="ATIVO"/>
+                    					<f:selectItem itemLabel="INATIVO" itemValue="INATIVO"/>
+									</p:selectOneMenu>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Descarte"/><br></br>
+							 		<p:calendar value="#{bemBean.bemEdicao.dataDescarte}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+							 		<p:outputLabel  value="Data de Venda"/><br></br>
+							 		<p:calendar value="#{bemBean.bemEdicao.dataVenda}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>													
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{bemBean.salvar}" update=":formTab:tabela-bem" ajax="false"/>										 										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+			
+			<h:form id="formEdit" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Edição de Bens" widgetVar="janelaEdicao" id="edicao-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-bem">
+						<p:tab title="Dados">
+							<h:panelGrid columns="1">							
+								<p:outputLabel>
+									<p:outputLabel  value="Descrição"/><br></br>
+									<p:inputText style="width: 655px; text-transform: uppercase" value="#{bemBean.bemEdicao.descricao}" required="true" requiredMessage="Descrição obrigatória"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Valor de Bem"/><br></br>
+									<p:inputNumber style="width: 300px; text-transform: uppercase" value="#{bemBean.bemEdicao.valorUnitarioBem}" required="true" requiredMessage="Valor do bem obrigatório"
+												   symbol="R$ " decimalSeparator="," thousandSeparator="."/>																
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Compra"/><br></br>
+							 		<p:calendar value="#{bemBean.bemEdicao.dataCompra}" pattern="dd-MM-yyyy" mask="true" style="width: 175px" required="true" requiredMessage="Data de compra obrigatória"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+						    		<p:outputLabel value="Local de Uso"/>
+						    		<p:inputText style="width: 290px; text-transform: uppercase" value="#{bemBean.bemEdicao.localUso}" required="true" requiredMessage="Local de uso obrigatório"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Situação"/><br></br>
+									<p:selectOneMenu value="#{bemBean.bemEdicao.situacao}" required="true" requiredMessage="Situação do bem obrigatória">
+										<f:selectItem itemLabel="SELECIONE UMA OPÇÃO" itemDisabled="true"/>
+										<f:selectItem itemLabel="ATIVO" itemValue="ATIVO"/>
+                    					<f:selectItem itemLabel="INATIVO" itemValue="INATIVO"/>
+									</p:selectOneMenu>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Descarte"/><br></br>
+							 		<p:calendar value="#{bemBean.bemEdicao.dataDescarte}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+							 		<p:outputLabel  value="Data de Venda"/><br></br>
+							 		<p:calendar value="#{bemBean.bemEdicao.dataVenda}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>															
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{bemBean.editar}" update=":formTab:tabela-bem" />										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+								
+		</p:panel>
+		</p:layoutUnit>
+	</ui:define>
+</ui:composition>

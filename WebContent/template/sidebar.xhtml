@@ -1,0 +1,24 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" 
+                xmlns:h="http://java.sun.com/jsf/html" 
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets" 
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:ph="http://primefaces.org/harmony">
+
+    <div class="layout-sidebar">
+        <div class="nano">
+            <div class="nano-content menu-scroll-content">
+                <h:form id="menuform">
+                    <ph:menu widgetVar="me">
+                        <p:menuitem id="inicio" value="Início" icon="fa fa-home" action="inicial" />
+                        <p:menuitem id="bem" value="Bens Avulso" action="cadastro-bem" icon="fa fa-archive"/>
+                        <p:menuitem id="membro" value="Membros" action="cadastro-membro" icon="fa fa-users"/>
+                        <p:menuitem id="nota" value="Notas" action="cadastro-nota" icon="fa fa-file-archive-o"/>
+                        <p:menuitem id="servico" value="Serviços" action="cadastro-servico" icon="fa fa-file-archive-o"/>
+                        <p:menuitem id="usuario" value="Usuários" action="cadastro-usuario" icon="fa fa-user"/>                                                                                                     
+                    </ph:menu>                    
+                </h:form>
+            </div>
+        </div>
+    </div>
+</ui:composition>

@@ -1,0 +1,178 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/template/template.xhtml">
+	
+	<ui:define name="title">Cadastro De Serviços</ui:define>
+	
+	<ui:define name="content">		
+		
+		<p:layoutUnit position="center" style="border: 0px;">
+		<p:panel header="Cadastro de Serviços" styleClass="painel">		
+			<p:growl autoUpdate="true"></p:growl>			
+			<h:form id="formServico">				
+				<p:toolbar id="menuServico">
+					<f:facet name="left">
+						<h:panelGrid columns="4">
+							
+							<p:outputPanel>
+								<p:commandButton icon="fa fa-plus"  value="Novo Serviço" title="Novo Serviço" action="#{servicoBean.preparaCadastro}"
+												 oncomplete="PF('janelaTipo').show()" process="@this" update=":formTipo:tipo-dialog"/>								 
+							</p:outputPanel>						
+							
+							<p:outputPanel>
+								<span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+							</p:outputPanel>
+														
+							<p:outputPanel>								
+								<p:commandButton value="Editar" icon="fa fa-edit" title="Editar" oncomplete="PF('janelaEdicao').show()" update=":formEdit:edicao-dialog">
+									<p:resetInput target=":formEdit:edicao-dialog"/>
+									<f:setPropertyActionListener value="#{servicoBean.servicoSelecao}" target="#{servicoBean.servicoEdicao}"/>
+								</p:commandButton>
+							</p:outputPanel>														
+							
+							<p:outputPanel>
+								<p:commandButton action="#{servicoBean.remover}" value="Excluir" title="Excluir" process="@this" 
+												 update=":formTab:tabela-servico" icon="fa fa-trash" />																	
+							</p:outputPanel>						
+						</h:panelGrid>
+					</f:facet>
+				</p:toolbar>
+			</h:form>		
+			
+			<h:form id="formTab">				
+				<p:dataTable id="tabela-servico" value="#{servicoBean.todosServicos}" var="linha" emptyMessage="Nenhum serviço cadastrado!" rows="10" paginator="true" paginatorPosition="bottom" style="margin-top: 10px"
+							selectionMode="single" rowKey="#{linha.idServico}" selection="#{servicoBean.servicoSelecao}" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {JumpToPageDropdown} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="[ Exibindo de {startRecord} a {endRecord} no total de {totalRecords} - Página: {currentPage}/{totalPages} ]">
+							
+							<p:ajax event="rowSelect" update=":formServico:menuServico" ></p:ajax> 
+							<p:ajax event="rowSelect" update=":formServico:menuServico"></p:ajax> 
+							<p:ajax event="rowUnselect" update=":formServico:menuServico"></p:ajax> 
+														
+							<p:column headerText="Prestador" filterMatchMode="contains" filterBy="#{linha.nomeContratado}">
+								<h:outputText value="#{linha.nomeContratado}" style="text-transform:uppercase"/>
+							</p:column>							
+							
+							<p:column headerText="Documento" filterMatchMode="contains" filterBy="#{linha.documentoContratado}">
+								<h:outputText value="#{linha.documentoContratado}" style="text-transform:uppercase"/>
+							</p:column>	
+							
+							<p:column headerText="Data do Serviço" filterMatchMode="contains" filterBy="#{linha.dataServico}">
+								<h:outputText value="#{linha.dataServico}" style="text-transform:uppercase">
+									<f:convertDateTime pattern="dd/MM/yyyy"/>
+								</h:outputText>
+							</p:column>										
+				</p:dataTable>
+			</h:form>
+			
+			<h:form id="formTipo" acceptcharset="UTF-8">				
+				<p:dialog width="500px" maximizable="true" responsive="true" header="Selecione o Tipo de Prestador" widgetVar="janelaTipo" id="tipo-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-servico">
+					<p:tab title="Menu">
+						<h:panelGrid columns="2">						
+							<p:commandButton resetValues="true" value="Pessoa Física" action="#{servicoBean.selecionaPrestadorPF}" oncomplete="PF('janelaCadastro').show()" 
+											 process="@this" update=":formCad:cadastro-dialog" style="width: 215px"/>
+							
+							<p:commandButton resetValues="true" value="Pessoa Jurídica" action="#{servicoBean.selecionaPrestadorPJ}" oncomplete="PF('janelaCadastro').show()" 
+											 process="@this" update=":formCad:cadastro-dialog" style="width: 215px"/>						
+						</h:panelGrid>
+					</p:tab>				
+					</p:tabView>
+				</p:dialog>
+			</h:form>
+			
+			<h:form id="formCad" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Novo Serviço" widgetVar="janelaCadastro" id="cadastro-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-servico">
+						<p:tab title="Dados do serviço">
+							<h:panelGrid columns="2">							
+								<p:outputLabel>
+									<p:outputLabel  value="Documento do Prestador"/><br></br>
+									<p:inputMask mask="#{servicoBean.documentoPrestador}" value="#{servicoBean.servicoEdicao.documentoContratado}" required="true" requiredMessage="Documento obrigatório"/>
+							    </p:outputLabel>
+							   
+							    <p:outputLabel>
+									<p:outputLabel  value="Nome Prestador"/><br></br>
+									<p:inputText style="width: 475px; text-transform: uppercase" value="#{servicoBean.servicoEdicao.nomeContratado}" required="true" requiredMessage="Nome obrigatório"/>
+							    </p:outputLabel>					   
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2">
+								<h:outputLabel>
+									<h:outputLabel value="Valor do Serviço"/><br></br>
+									<p:inputNumber value="#{servicoBean.servicoEdicao.valorServico}" required="true" requiredMessage="Valor obrigatório"
+												   symbol="R$ " decimalSeparator="," thousandSeparator="."/>
+								</h:outputLabel>
+								
+								<h:outputLabel>
+									<h:outputLabel value="Data do Serviço"/><br></br>
+									<p:calendar value="#{servicoBean.servicoEdicao.dataServico}" pattern="dd/MM/yyyy" mask="true"/>
+								</h:outputLabel>						
+							</h:panelGrid>
+							
+							<h:panelGrid columns="1">
+								<h:outputLabel>
+									<h:outputLabel value="Descrição do Servico"/><br></br>
+									<p:inputText value="#{servicoBean.servicoEdicao.descricaoServico}" style="width: 660px; text-transform: uppercase" required="true" requiredMessage="Descrição obrigatória"/>
+								</h:outputLabel>						
+							</h:panelGrid>																			
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{servicoBean.salvar}" update=":formTab:tabela-servico" ajax="false"/>										 										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+			
+			<h:form id="formEdit" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Edição de Serviço" widgetVar="janelaEdicao" id="edicao-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-servico">
+						<p:tab title="Dados do serviço">
+							<h:panelGrid columns="2">							
+								<p:outputLabel>
+									<p:outputLabel  value="Documento do Prestador"/><br></br>
+									<p:inputText disabled="true" value="#{servicoBean.servicoEdicao.documentoContratado}" required="true" requiredMessage="Documento obrigatório"/>
+							    </p:outputLabel>
+							   
+							    <p:outputLabel>
+									<p:outputLabel  value="Nome Prestador"/><br></br>
+									<p:inputText style="width: 475px; text-transform: uppercase" value="#{servicoBean.servicoEdicao.nomeContratado}" required="true" requiredMessage="Nome obrigatório"/>
+							    </p:outputLabel>					   
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2">
+								<h:outputLabel>
+									<h:outputLabel value="Valor do Serviço"/><br></br>
+									<p:inputNumber value="#{servicoBean.servicoEdicao.valorServico}" required="true" requiredMessage="Valor obrigatório"
+												   symbol="R$ " decimalSeparator="," thousandSeparator="."/>
+								</h:outputLabel>
+								
+								<h:outputLabel>
+									<h:outputLabel value="Data do Serviço"/><br></br>
+									<p:calendar value="#{servicoBean.servicoEdicao.dataServico}" pattern="dd/MM/yyyy" mask="true"/>
+								</h:outputLabel>						
+							</h:panelGrid>
+							
+							<h:panelGrid columns="1">
+								<h:outputLabel>
+									<h:outputLabel value="Descrição do Servico"/><br></br>
+									<p:inputText value="#{servicoBean.servicoEdicao.descricaoServico}" style="width: 660px; text-transform: uppercase" required="true" requiredMessage="Descrição obrigatória"/>
+								</h:outputLabel>						
+							</h:panelGrid>																			
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{servicoBean.atualizar}" update=":formTab:tabela-servico" ajax="false"/>										 										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>								
+		</p:panel>
+		</p:layoutUnit>
+	</ui:define>
+</ui:composition>

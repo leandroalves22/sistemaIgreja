@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>Login</title>
+    </h:head>
+
+    <h:body styleClass="login-body">     
+        <div class="logo">
+            
+            <span class="app-name">SISTEMA</span>        
+        </div>
+
+        <div class="login-panel">
+        	<p:growl autoUpdate="true"></p:growl>
+			<h:form id="formLogin">
+				<p:graphicImage name="images/template/image-login-mobile.jpg" library="harmony-layout" class="mobile"/>
+			            <div class="left-part">			            
+			                <span class="login-panel-header">Acesso ao Sistema</span>
+			                <span class="login-panel-subheader"></span>
+			                <div style="margin-top:32px">
+			                    <p:outputLabel value="Login"/>
+			                    <p:inputText value="#{loginBean.usuario.login}"/>
+			                    <p:outputLabel value="Senha" />
+			                    <p:inputText value="#{loginBean.usuario.senha}" type="password"/>                    
+			                </div>			                
+			                <p:commandButton value="Entrar" style="margin-bottom:10px; width: 271px" styleClass="raised-btn" action="#{loginBean.logar}"
+			                				 update=":formLogin" ajax="true"/>		                           		            
+			            </div>
+			            <div class="right-part">
+			                <p:graphicImage name="images/template/image-login.png" library="harmony-layout"/>
+			            </div>          
+        	</h:form>      	
+        </div>
+        <h:outputStylesheet name="css/layout-comfort.css" library="harmony-layout" />
+    </h:body>
+
+</html>

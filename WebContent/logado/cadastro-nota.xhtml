@@ -1,0 +1,409 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/template/template.xhtml">
+	
+	<ui:define name="title">Cadastro De Notas</ui:define>
+	
+	<ui:define name="content">		
+		
+		<p:layoutUnit position="center" style="border: 0px;">
+		<p:panel header="Cadastro de Notas" styleClass="painel">		
+			<p:growl autoUpdate="true"></p:growl>			
+			<h:form id="formNota">				
+				<p:toolbar id="menuNota">
+					<f:facet name="left">
+						<h:panelGrid columns="4">
+							
+							<p:outputPanel>
+								<p:commandButton resetValues="true" icon="fa fa-plus" action="#{notaBean.preparaCadastro}" value="Nova Nota" title="Nova Nota" 
+												 oncomplete="PF('janelaCadastro').show()" process="@this" update=":formCad:cadastro-dialog"/>								 
+							</p:outputPanel>
+							
+							<p:outputPanel>
+								<span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+							</p:outputPanel>							
+							<p:outputPanel>								
+								<p:commandButton action="#{notaBean.preparaEdicao}" value="Editar" icon="fa fa-edit" title="Editar" oncomplete="PF('janelaEdicao').show()" 
+												  process="@this" update=":formEdit:edicao-dialog">
+									<p:resetInput target=":formEdit:edicao-dialog"/>
+									<f:setPropertyActionListener value="#{notaBean.notaSelecao}" target="#{notaBean.notaEdicao}"/>
+								</p:commandButton>
+							</p:outputPanel>														
+							
+							<p:outputPanel>
+								<p:commandButton action="#{notaBean.remover}" value="Excluir" title="Excluir" process="@this" 
+												 update=":formTab:tabela-nota" icon="fa fa-trash" />																	
+							</p:outputPanel>
+							
+						</h:panelGrid>
+					</f:facet>
+				</p:toolbar>
+			</h:form>		
+			
+			<h:form id="formTab">				
+				<p:dataTable id="tabela-nota" value="#{notaBean.todasNotas}" var="linha" emptyMessage="Nenhuma nota cadastrada!" rows="10" paginator="true" paginatorPosition="bottom" style="margin-top: 10px"
+							selectionMode="single" rowKey="#{linha.idNota}" selection="#{notaBean.notaSelecao}" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {JumpToPageDropdown} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="[ Exibindo de {startRecord} a {endRecord} no total de {totalRecords} - Página: {currentPage}/{totalPages} ]">
+							
+							<p:ajax event="rowSelect" update=":formNota:menuNota"></p:ajax> 
+							<p:ajax event="rowSelect" update=":formNota:menuNota"></p:ajax> 
+							<p:ajax event="rowUnselect" update=":formNota:menuNota"></p:ajax> 
+														
+							<p:column headerText="Número Da Nota" filterMatchMode="contains" filterBy="#{linha.numeroNota}">
+								<h:outputText value="#{linha.numeroNota}" style="text-transform:uppercase"/>
+							</p:column>							
+							
+							<p:column headerText="Loja" filterMatchMode="contains" filterBy="#{linha.loja}">
+								<h:outputText value="#{linha.loja}" style="text-transform:uppercase"/>
+							</p:column>
+											
+				</p:dataTable>
+			</h:form>		
+			
+			<h:form id="formCad" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Nova Nota" widgetVar="janelaCadastro" id="cadastro-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-nota">
+						<p:tab title="Dados da Nota">
+							<h:panelGrid columns="2">							
+								<p:outputLabel>
+									<p:outputLabel  value="Número Da Nota"/><br></br>
+									<p:inputText style="width: 250px; text-transform: uppercase" value="#{notaBean.notaEdicao.numeroNota}" required="true" requiredMessage="Número obrigatório"/>
+							   </p:outputLabel>
+							   
+							   <p:outputLabel>
+									<p:outputLabel  value="Loja"/><br></br>
+									<p:inputText style="width: 400px; text-transform: uppercase" value="#{notaBean.notaEdicao.loja}" required="true" requiredMessage="Loja obrigatória"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2">
+								<p:outputLabel>
+									<p:outputLabel value="Data Da Compra"/><br></br>
+									<p:calendar value="#{notaBean.notaEdicao.dataCompra}" pattern="dd/MM/yyyy" mask="true"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Valor Total Da Nota"/><br></br>
+									<p:inputNumber style="width: 300px; text-transform: uppercase" value="#{notaBean.notaEdicao.valorTotalNota}" required="true" requiredMessage="Valor da nota obrigatório"
+												   symbol="R$ " decimalSeparator="," thousandSeparator="."/>																
+								</p:outputLabel>							
+							</h:panelGrid>																									
+						</p:tab>
+						
+						<p:tab title="Produtos">
+							<h:form id="formProduto">				
+								<p:toolbar id="menuProduto">
+									<f:facet name="left">
+										<h:panelGrid columns="1">							
+											<p:outputPanel>
+												<p:commandButton resetValues="true" type="buttom" icon="fa fa-plus" action="#{notaBean.preparaCadastroBem}" process="@this" value="Inserir Produto" title="Inserir Produto" 
+															      oncomplete="PF('janelaCadastroProduto').show()" update=":formCadProd:cadastro-dialog" />								 
+											</p:outputPanel>							
+										</h:panelGrid>
+									</f:facet>
+								</p:toolbar>
+							</h:form>
+							
+							<h:form id="formTab">				
+								<p:dataTable id="tabela-bem" value="#{notaBean.todosBensNota}" var="linha" emptyMessage="Nenhum produto cadastrado!" rows="10" paginator="true" 
+											 paginatorPosition="bottom" style="margin-top: 10px" rowKey="#{linha.idBem}"  
+											 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {JumpToPageDropdown} {NextPageLink} {LastPageLink}"
+											 currentPageReportTemplate="[ Exibindo de {startRecord} a {endRecord} no total de {totalRecords} - Página: {currentPage}/{totalPages} ]">
+																													
+											<p:column headerText="Descrição" filterMatchMode="contains" filterBy="#{linha.descricao}">
+												<h:outputText value="#{linha.descricao}" style="text-transform:uppercase"/>
+											</p:column>							
+											
+											<p:column headerText="Local" filterMatchMode="contains" filterBy="#{linha.localUso}">
+												<h:outputText value="#{linha.localUso}" style="text-transform:uppercase"/>
+											</p:column>
+											
+											<p:column headerText="Valor" filterMatchMode="contains" filterBy="#{linha.valorUnitarioBem}" visible="false">
+												<h:outputText value="#{linha.valorUnitarioBem}" style="text-transform:uppercase"/>
+											</p:column>														
+								</p:dataTable>
+							</h:form>												
+						</p:tab>						
+					 </p:tabView>					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{notaBean.salvar}" update=":formTab:tabela-nota" ajax="false"/>										 										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+			
+			<h:form id="formEdit" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Edição de Nota" widgetVar="janelaEdicao" id="edicao-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-nota">
+						<p:tab title="Dados da Nota">
+							<h:panelGrid columns="2">							
+								<p:outputLabel>
+									<p:outputLabel  value="Número Da Nota"/><br></br>
+									<p:inputText style="width: 250px; text-transform: uppercase" value="#{notaBean.notaEdicao.numeroNota}" required="true" requiredMessage="Número obrigatório"/>
+							   </p:outputLabel>
+							   
+							   <p:outputLabel>
+									<p:outputLabel  value="Loja"/><br></br>
+									<p:inputText style="width: 400px; text-transform: uppercase" value="#{notaBean.notaEdicao.loja}" required="true" requiredMessage="Loja obrigatória"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="2">
+								<p:outputLabel>
+									<p:outputLabel value="Data Da Compra"/><br></br>
+									<p:calendar value="#{notaBean.notaEdicao.dataCompra}" pattern="dd/MM/yyyy" mask="true"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Valor Total Da Nota"/><br></br>
+									<p:inputNumber style="width: 300px; text-transform: uppercase" value="#{notaBean.notaEdicao.valorTotalNota}" required="true" requiredMessage="Valor da nota obrigatório"
+												   symbol="R$ " decimalSeparator="," thousandSeparator="."/>																
+								</p:outputLabel>							
+							</h:panelGrid>																									
+						</p:tab>
+						
+						<p:tab title="Produtos">
+							<h:form id="formProduto">				
+								<p:toolbar id="menuProduto">
+									<f:facet name="left">
+										<h:panelGrid columns="3">							
+											<p:outputPanel>
+												<p:commandButton resetValues="true" type="buttom" icon="fa fa-plus" action="#{notaBean.preparaCadastroBem}" process="@this" value="Inserir Produto" 
+																 title="Inserir Produto" oncomplete="PF('janelaNovoProduto').show()" update=":formInseriNovoProd:cadastro-dialog"/>								 
+											</p:outputPanel>
+											
+											<p:outputPanel>
+												<span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+											</p:outputPanel>
+																		
+											<p:outputPanel>								
+												<p:commandButton value="Editar Produto" icon="fa fa-edit" title="Editar Produto" oncomplete="PF('janelaEdicaoProduto').show()" 
+																 process="@this" update=":formEditProd:edicao-dialog">
+													<p:resetInput target=":formEditProd:edicao-dialog"/>
+													<f:setPropertyActionListener value="#{notaBean.bemSelecao}" target="#{notaBean.bemEdicao}"/>
+												</p:commandButton>
+											</p:outputPanel>								
+																		
+										</h:panelGrid>
+									</f:facet>
+								</p:toolbar>
+							</h:form>
+							
+							<h:form id="formTab">				
+								<p:dataTable id="tabela-bem" value="#{notaBean.todosBensNota}" var="linha" emptyMessage="Nenhum produto cadastrado!" rows="10" paginator="true" 
+											 paginatorPosition="bottom" style="margin-top: 10px" rowKey="#{linha.idBem}" selectionMode="single" selection="#{notaBean.bemSelecao}" 
+											 paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {JumpToPageDropdown} {NextPageLink} {LastPageLink}"
+											 currentPageReportTemplate="[ Exibindo de {startRecord} a {endRecord} no total de {totalRecords} - Página: {currentPage}/{totalPages} ]">
+																													
+											<p:ajax event="rowSelect" update=":formNota:menuNota"></p:ajax> 
+											<p:ajax event="rowSelect" update=":formNota:menuNota"></p:ajax> 
+											<p:ajax event="rowUnselect" update=":formNota:menuNota"></p:ajax>
+											
+											<p:column headerText="Descrição" filterMatchMode="contains" filterBy="#{linha.descricao}">
+												<h:outputText value="#{linha.descricao}" style="text-transform:uppercase"/>
+											</p:column>							
+											
+											<p:column headerText="Local" filterMatchMode="contains" filterBy="#{linha.localUso}">
+												<h:outputText value="#{linha.localUso}" style="text-transform:uppercase"/>
+											</p:column>
+											
+											<p:column headerText="Valor" filterMatchMode="contains" filterBy="#{linha.valorUnitarioBem}" visible="false">
+												<h:outputText value="#{linha.valorUnitarioBem}" style="text-transform:uppercase"/>
+											</p:column>														
+								</p:dataTable>
+							</h:form>												
+						</p:tab>
+						
+						
+					 </p:tabView>					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{notaBean.editar}" update=":formTab:tabela-nota" ajax="false"/>										 										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>		
+			
+			<h:form id="formCadProd" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Novo Produto" widgetVar="janelaCadastroProduto" id="cadastro-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-bem">
+						<p:tab title="Dados">
+							<h:panelGrid columns="1">							
+								<p:outputLabel>
+									<p:outputLabel  value="Descrição"/><br></br>
+									<p:inputText style="width: 655px; text-transform: uppercase" value="#{notaBean.bemEdicao.descricao}" required="true" requiredMessage="Descrição obrigatória"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Valor Unitário do Produto"/><br></br>
+									<p:inputNumber style="width: 300px; text-transform: uppercase" value="#{notaBean.bemEdicao.valorUnitarioBem}" required="true" requiredMessage="Valor do bem obrigatório"
+												   symbol="R$ " decimalSeparator="," thousandSeparator="."/>																
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Compra"/><br></br>
+							 		<p:calendar value="#{notaBean.bemEdicao.dataCompra}" pattern="dd-MM-yyyy" mask="true" style="width: 175px" required="true" requiredMessage="Data de compra obrigatória"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+						    		<p:outputLabel value="Local de Uso"/>
+						    		<p:inputText style="width: 290px; text-transform: uppercase" value="#{notaBean.bemEdicao.localUso}" required="true" requiredMessage="Local de uso obrigatório"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Situação"/><br></br>
+									<p:selectOneMenu value="#{notaBean.bemEdicao.situacao}" required="true" requiredMessage="Situação do produto obrigatória">
+										<f:selectItem itemLabel="SELECIONE UMA OPÇÃO" itemDisabled="true"/>
+										<f:selectItem itemLabel="ATIVO" itemValue="ATIVO"/>
+                    					<f:selectItem itemLabel="INATIVO" itemValue="INATIVO"/>
+									</p:selectOneMenu>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Descarte"/><br></br>
+							 		<p:calendar value="#{notaBean.bemEdicao.dataDescarte}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+							 		<p:outputLabel  value="Data de Venda"/><br></br>
+							 		<p:calendar value="#{notaBean.bemEdicao.dataVenda}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>														
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Inserir" action="#{notaBean.InseriBensLista}" update=":formCad:tab-nota:formTab:tabela-bem"
+										 onclick="PF('janelaCadastroProduto').hide()"	/>										 										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+			
+			<h:form id="formEditProd" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Editar Produto" widgetVar="janelaEdicaoProduto" id="edicao-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-bem">
+						<p:tab title="Dados">
+							<h:panelGrid columns="1">							
+								<p:outputLabel>
+									<p:outputLabel  value="Descrição"/><br></br>
+									<p:inputText style="width: 655px; text-transform: uppercase" value="#{notaBean.bemEdicao.descricao}" required="true" requiredMessage="Descrição obrigatória"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Valor Unitário do Produto"/><br></br>
+									<p:inputNumber style="width: 300px; text-transform: uppercase" value="#{notaBean.bemEdicao.valorUnitarioBem}" required="true" requiredMessage="Valor obrigatório"
+												   symbol="R$ " decimalSeparator="," thousandSeparator="."/>																
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Compra"/><br></br>
+							 		<p:calendar value="#{notaBean.bemEdicao.dataCompra}" pattern="dd-MM-yyyy" mask="true" style="width: 175px" required="true" requiredMessage="Data de compra obrigatória"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+						    		<p:outputLabel value="Local de Uso"/>
+						    		<p:inputText style="width: 290px; text-transform: uppercase" value="#{notaBean.bemEdicao.localUso}" required="true" requiredMessage="Local de uso obrigatório"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Situação"/><br></br>
+									<p:selectOneMenu value="#{notaBean.bemEdicao.situacao}" required="true" requiredMessage="Situação do bem obrigatória">
+										<f:selectItem itemLabel="SELECIONE UMA OPÇÃO" itemDisabled="true"/>
+										<f:selectItem itemLabel="ATIVO" itemValue="ATIVO"/>
+                    					<f:selectItem itemLabel="INATIVO" itemValue="INATIVO"/>
+									</p:selectOneMenu>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Descarte"/><br></br>
+							 		<p:calendar value="#{notaBean.bemEdicao.dataDescarte}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+							 		<p:outputLabel  value="Data de Venda"/><br></br>
+							 		<p:calendar value="#{notaBean.bemEdicao.dataVenda}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>														
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar Alterações" action="#{notaBean.editaBensLista}" update=":formEdit:tab-nota:formTab:tabela-bem"
+										 onclick="PF('janelaEdicaoProduto').hide()"	/>										 										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+			
+			<h:form id="formInseriNovoProd" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Novo Produto" widgetVar="janelaNovoProduto" id="cadastro-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-bem">
+						<p:tab title="Dados">
+							<h:panelGrid columns="1">							
+								<p:outputLabel>
+									<p:outputLabel  value="Descrição"/><br></br>
+									<p:inputText style="width: 655px; text-transform: uppercase" value="#{notaBean.bemEdicao.descricao}" required="true" requiredMessage="Descrição obrigatória"/>
+							   </p:outputLabel>
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Valor Unitário do Produto"/><br></br>
+									<p:inputNumber style="width: 300px; text-transform: uppercase" value="#{notaBean.bemEdicao.valorUnitarioBem}" required="true" requiredMessage="Valor obrigatório"
+												   symbol="R$ " decimalSeparator="," thousandSeparator="."/>																
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Compra"/><br></br>
+							 		<p:calendar value="#{notaBean.bemEdicao.dataCompra}" pattern="dd-MM-yyyy" mask="true" style="width: 175px" required="true" requiredMessage="Data de compra obrigatória"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+						    		<p:outputLabel value="Local de Uso"/>
+						    		<p:inputText style="width: 290px; text-transform: uppercase" value="#{notaBean.bemEdicao.localUso}" required="true" requiredMessage="Local de uso obrigatório"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>
+							
+							<h:panelGrid columns="3">
+								<p:outputLabel>
+									<p:outputLabel value="Situação"/><br></br>
+									<p:selectOneMenu value="#{notaBean.bemEdicao.situacao}" required="true" requiredMessage="Situação do bem obrigatória">
+										<f:selectItem itemLabel="SELECIONE UMA OPÇÃO" itemDisabled="true"/>
+										<f:selectItem itemLabel="ATIVO" itemValue="ATIVO"/>
+                    					<f:selectItem itemLabel="INATIVO" itemValue="INATIVO"/>
+									</p:selectOneMenu>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+							 		<p:outputLabel  value="Data de Descarte"/><br></br>
+							 		<p:calendar value="#{notaBean.bemEdicao.dataDescarte}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>
+						    	
+						    	<p:outputLabel>
+							 		<p:outputLabel  value="Data de Venda"/><br></br>
+							 		<p:calendar value="#{notaBean.bemEdicao.dataVenda}" pattern="dd-MM-yyyy" mask="true" style="width: 175px"/>
+						    	</p:outputLabel>							
+							</h:panelGrid>														
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Inserir" action="#{notaBean.InseriBensNovoLista}" update=":formEdit:tab-nota:formTab:tabela-bem"
+										 onclick="PF('janelaNovoProduto').hide()"	/>										 										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>		
+											
+		</p:panel>
+		</p:layoutUnit>
+	</ui:define>
+</ui:composition>
