@@ -1,0 +1,144 @@
+<ui:composition
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	template="/template/template.xhtml">
+	
+	<ui:define name="title">Cadastro De Usuários</ui:define>
+	
+	<ui:define name="content">		
+		
+		<p:layoutUnit position="center" style="border: 0px;">
+		<p:panel header="Cadastro de Entradas Financeiras" styleClass="painel">		
+			<p:growl autoUpdate="true"></p:growl>			
+			<h:form id="formEntrada">				
+				<p:toolbar id="menuEntrada">
+					<f:facet name="left">
+						<h:panelGrid columns="4">
+							
+							<p:outputPanel>
+								<p:commandButton resetValues="true" icon="fa fa-plus" action="#{entradaBean.preparaCadastro}" value="Nova" title="Nova" 
+												 oncomplete="PF('janelaCadastro').show()" process="@this" update=":formCad:cadastro-dialog"/>								 
+							</p:outputPanel>
+							
+							<p:outputPanel>
+								<span class="ui-separator"><span class="ui-icon ui-icon-grip-dotted-vertical"/></span>
+							</p:outputPanel>							
+							<p:outputPanel>								
+								<p:commandButton value="Editar" icon="fa fa-edit" title="Editar" oncomplete="PF('janelaEdicao').show()" 
+												  process="@this" update=":formEdit:edicao-dialog">
+									<p:resetInput target=":formEdit:edicao-dialog"/>
+									<f:setPropertyActionListener value="#{entradaBean.entradaSelecao}" target="#{entradaBean.entradaEdicao}"/>
+								</p:commandButton>
+							</p:outputPanel>														
+							
+							<p:outputPanel>
+								<p:commandButton action="#{entradaBean.remover}" value="Excluir" title="Excluir" process="@this" 
+												 update=":formTab:tabela-entrada" icon="fa fa-trash" />																	
+							</p:outputPanel>							
+						</h:panelGrid>
+					</f:facet>
+				</p:toolbar>
+			</h:form>		
+			
+			<h:form id="formTab">				
+				<p:dataTable id="tabela-entrada" value="#{entradaBean.todasEntradas}" var="linha" emptyMessage="Nenhuma entrada financeira cadastrada!" rows="10" paginator="true" paginatorPosition="bottom" style="margin-top: 10px"
+							selectionMode="single" rowKey="#{linha.idEntrada}" selection="#{entradaBean.entradaSelecao}" 
+							paginatorTemplate="{FirstPageLink} {PreviousPageLink} {CurrentPageReport} {JumpToPageDropdown} {NextPageLink} {LastPageLink}"
+							currentPageReportTemplate="[ Exibindo de {startRecord} a {endRecord} no total de {totalRecords} - Página: {currentPage}/{totalPages} ]">
+							
+							<p:ajax event="rowSelect" update=":formEntrada:menuEntrada" ></p:ajax> 
+							<p:ajax event="rowSelect" update=":formEntrada:menuEntrada"></p:ajax> 
+							<p:ajax event="rowUnselect" update=":formEntrada:menuEntrada"></p:ajax> 
+														
+							<p:column headerText="Tipo Entrada" filterMatchMode="contains" filterBy="#{linha.tipoEntrada}">
+								<h:outputText value="#{linha.tipoEntrada}" style="text-transform:uppercase"/>
+							</p:column>							
+							
+							<p:column headerText="Valor" filterMatchMode="contains" filterBy="#{linha.valorEntrada}">
+								<h:outputText value="#{linha.valorEntrada}" style="text-transform:uppercase"/>
+							</p:column>
+							
+							<p:column headerText="Data" filterMatchMode="contains" filterBy="#{linha.dataEntrada}">
+								<h:outputText value="#{linha.valorEntrada}" style="text-transform:uppercase">
+									<f:convertDateTime pattern="dd/MM/yyyy"/>
+								</h:outputText>
+							</p:column>											
+				</p:dataTable>
+			</h:form>		
+			
+			<h:form id="formCad" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Nova Entrada" widgetVar="janelaCadastro" id="cadastro-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-entrada">
+						<p:tab title="Dados">
+							<h:panelGrid columns="3">							
+								<p:outputLabel>
+									<p:outputLabel value="Tipo de Entrada"/>
+									<p:selectOneMenu value="#{entradaBean.entradaEdicao.tipoEntrada}" required="true" requiredMessage="Tipo de entrada obrigatória">
+										<f:selectItem itemDisabled="true" itemLabel="SELECIONE UMA OPÇÃO"/>
+										<f:selectItem itemLabel="DÍZIMO" itemValue="DÍZIMO"/>
+										<f:selectItem itemLabel="OFERTA" itemValue="OFERTA"/>
+										<f:selectItem itemLabel="MISSÕES" itemValue="MISSÕES"/>
+										<f:selectItem itemLabel="OUTROS" itemValue="OUTROS"/>
+									</p:selectOneMenu>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Valor da Entrada"/>
+									<p:inputNumber value="#{entradaBean.entradaEdicao.valorEntrada}" required="true" requiredMessage="Valor da entrada obrigatório"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Data da Entrada"/>
+									<p:calendar value="#{entradaBean.entradaEdicao.dataEntrada}" pattern="dd/MM/yyyy" mask="true" required="true" requiredMessage="Data da entrada obrigatória"/>
+								</p:outputLabel>							
+							</h:panelGrid>										
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{entradaBean.salvar}" update=":formTab:tabela-entrada" />										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>
+			
+			<h:form id="formEdit" acceptcharset="UTF-8">				
+				<p:dialog width="720px" maximizable="true" responsive="true" header="Edição de Entrada Financeiras" widgetVar="janelaEdicao" id="edicao-dialog" resizable="false" modal="false">
+					<p:tabView id="tab-entrada">
+						<p:tab title="Dados ">
+							<h:panelGrid columns="3">							
+								<p:outputLabel>
+									<p:outputLabel value="Tipo de Entrada"/>
+									<p:selectOneMenu value="#{entradaBean.entradaEdicao.tipoEntrada}" required="true" requiredMessage="Tipo de entrada obrigatória">
+										<f:selectItem itemDisabled="true" itemLabel="SELECIONE UMA OPÇÃO"/>
+										<f:selectItem itemLabel="DÍZIMO" itemValue="DÍZIMO"/>
+										<f:selectItem itemLabel="OFERTA" itemValue="OFERTA"/>
+										<f:selectItem itemLabel="MISSÕES" itemValue="MISSÕES"/>
+										<f:selectItem itemLabel="OUTROS" itemValue="OUTROS"/>
+									</p:selectOneMenu>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Valor da Entrada"/>
+									<p:inputNumber value="#{entradaBean.entradaEdicao.valorEntrada}" required="true" requiredMessage="Valor da entrada obrigatório"/>
+								</p:outputLabel>
+								
+								<p:outputLabel>
+									<p:outputLabel value="Data da Entrada"/>
+									<p:calendar value="#{entradaBean.entradaEdicao.dataEntrada}" pattern="dd/MM/yyyy" mask="true" required="true" requiredMessage="Data da entrada obrigatória"/>
+								</p:outputLabel>							
+							</h:panelGrid>												
+						</p:tab>
+					 </p:tabView>
+					
+					<h:panelGrid columns="1"> 
+						<p:commandButton style="width: 685px" value="Salvar" action="#{entradaBean.editar}" update=":formTab:tabela-entrada" />										 						
+					</h:panelGrid>				
+				</p:dialog>
+			</h:form>								
+		</p:panel>
+		</p:layoutUnit>
+	</ui:define>
+</ui:composition>

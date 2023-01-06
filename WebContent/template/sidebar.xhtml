@@ -12,6 +12,10 @@
                     <ph:menu widgetVar="me">
                         <p:menuitem id="inicio" value="Início" icon="fa fa-home" action="inicial" />
                         <p:menuitem id="bem" value="Bens Avulso" action="cadastro-bem" icon="fa fa-archive"/>
+                        <p:submenu label="Financeiro" icon="fa fa-dollar">
+                        	<p:menuitem id="entrada" value="Entrada" action="cadastro-entrada" icon="fa fa-arrow-right"/>
+                        	<p:menuitem id="saida" value="Saída" action="cadastro-saida" icon="fa fa-arrow-left"/>
+                        </p:submenu>
                         <p:menuitem id="membro" value="Membros" action="cadastro-membro" icon="fa fa-users"/>
                         <p:menuitem id="nota" value="Notas" action="cadastro-nota" icon="fa fa-file-archive-o"/>
                         <p:menuitem id="servico" value="Serviços" action="cadastro-servico" icon="fa fa-file-archive-o"/>
