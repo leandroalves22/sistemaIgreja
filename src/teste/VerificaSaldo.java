@@ -1,18 +1,17 @@
 package teste;
 
-import dao.EntradaDao;
+import dao.RelatorioDao;
 
 public class VerificaSaldo {
 
 	public static void main(String[] args) {
 		
-		EntradaDao ed = new EntradaDao();
-		Double soma;
+		RelatorioDao rd = new RelatorioDao();
+		Double saldo;
 
 		try {
-			soma = ed.somaEntradas();
-
-			System.out.println("Saldo Total: " + soma);
+			saldo = rd.saldoTotal();
+			System.out.println("Saldo Total: " + saldo);
 
 		} catch (Exception e) {
 			System.out.println("Erro" + e.getMessage());

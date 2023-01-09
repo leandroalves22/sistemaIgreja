@@ -62,8 +62,7 @@ public class EntradaDao {
 		session = HibernateUtil.getSessionFactory().openSession();
 			query = session.createQuery("select sum(valorEntrada) from Entrada");
 			Double soma = (Double) query.uniqueResult();
-		return soma;
-			
+		return soma;			
 	}
 
 }

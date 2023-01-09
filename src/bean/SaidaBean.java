@@ -52,6 +52,7 @@ public class SaidaBean implements Serializable {
 	}
 
 	public List<Saida> getTodasSaidas() {
+		todasSaidas = saidaDao.todasSaidas();
 		return todasSaidas;
 	}
 
