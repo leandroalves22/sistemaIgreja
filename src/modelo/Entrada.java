@@ -12,10 +12,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-public class Entrada implements Serializable{
-	
+public class Entrada implements Serializable {
+
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idEntrada;
@@ -25,16 +25,20 @@ public class Entrada implements Serializable{
 	private Double valorEntrada;
 	@Temporal(TemporalType.DATE)
 	private Date dataEntrada;
-	
+	@Column
+	private String descricaoEntrada;
+
 	public Entrada() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Entrada(Integer idEntrada, String tipoEntrada, Double valorEntrada, Date dataEntrada) {
+	public Entrada(Integer idEntrada, String tipoEntrada, Double valorEntrada, Date dataEntrada,
+			String descricaoEntrada) {
 		this.idEntrada = idEntrada;
 		this.tipoEntrada = tipoEntrada;
 		this.valorEntrada = valorEntrada;
 		this.dataEntrada = dataEntrada;
+		this.descricaoEntrada = descricaoEntrada;
 	}
 
 	public Integer getIdEntrada() {
@@ -68,4 +72,13 @@ public class Entrada implements Serializable{
 	public void setDataEntrada(Date dataEntrada) {
 		this.dataEntrada = dataEntrada;
 	}
+
+	public String getDescricaoEntrada() {
+		return descricaoEntrada;
+	}
+
+	public void setDescricaoEntrada(String descricaoEntrada) {
+		this.descricaoEntrada = descricaoEntrada;
+	}
+
 }

@@ -94,6 +94,13 @@
 									<p:outputLabel value="Data da Entrada"/>
 									<p:calendar value="#{entradaBean.entradaEdicao.dataEntrada}" pattern="dd/MM/yyyy" mask="true" required="true" requiredMessage="Data da entrada obrigatória"/>
 								</p:outputLabel>							
+							</h:panelGrid>	
+							
+							<h:panelGrid columns="1">
+								<p:outputLabel>
+									<p:outputLabel value="Descrição da Entrada"/><br></br>
+									<p:inputText value="#{entradaBean.entradaEdicao.descricaoEntrada}" style="width: 625px; text-transform: uppercase"/>
+								</p:outputLabel>
 							</h:panelGrid>										
 						</p:tab>
 					 </p:tabView>
@@ -129,6 +136,13 @@
 									<p:outputLabel value="Data da Entrada"/>
 									<p:calendar value="#{entradaBean.entradaEdicao.dataEntrada}" pattern="dd/MM/yyyy" mask="true" required="true" requiredMessage="Data da entrada obrigatória"/>
 								</p:outputLabel>							
+							</h:panelGrid>
+							
+							<h:panelGrid columns="1">
+								<p:outputLabel>
+									<p:outputLabel value="Descrição da Entrada"/><br></br>
+									<p:inputText value="#{entradaBean.entradaEdicao.descricaoEntrada}" style="width: 625px; text-transform: uppercase"/>
+								</p:outputLabel>
 							</h:panelGrid>												
 						</p:tab>
 					 </p:tabView>

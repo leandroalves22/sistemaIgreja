@@ -12,7 +12,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-public class Saida implements Serializable{
+public class Saida implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -24,16 +24,19 @@ public class Saida implements Serializable{
 	private Double valorSaida;
 	@Temporal(TemporalType.DATE)
 	private Date dataSaida;
-	
+	@Column
+	private String descricaoSaida;
+
 	public Saida() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Saida(Integer idSaida, String tipoSaida, Double valorSaida, Date dataSaida) {
+	public Saida(Integer idSaida, String tipoSaida, Double valorSaida, Date dataSaida, String descricaoSaida) {
 		this.idSaida = idSaida;
 		this.tipoSaida = tipoSaida;
 		this.valorSaida = valorSaida;
 		this.dataSaida = dataSaida;
+		this.descricaoSaida = descricaoSaida;
 	}
 
 	public Integer getIdSaida() {
@@ -67,5 +70,13 @@ public class Saida implements Serializable{
 	public void setDataSaida(Date dataSaida) {
 		this.dataSaida = dataSaida;
 	}
-	
+
+	public String getDescricaoSaida() {
+		return descricaoSaida;
+	}
+
+	public void setDescricaoSaida(String descricaoSaida) {
+		this.descricaoSaida = descricaoSaida;
+	}
+
 }

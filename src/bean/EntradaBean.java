@@ -14,23 +14,24 @@ import org.primefaces.context.RequestContext;
 import dao.EntradaDao;
 import modelo.Entrada;
 
+
 @SuppressWarnings("deprecation")
 @ManagedBean(name = "entradaBean")
 @ApplicationScoped
-public class EntradaBean implements Serializable{
+public class EntradaBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Entrada entradaEdicao;
 	private Entrada entradaSelecao;
 	private List<Entrada> todasEntradas;
 	private EntradaDao entradaDao;
-	
+
 	@PostConstruct
 	public void construct() {
 		entradaEdicao = new Entrada();
 		entradaSelecao = new Entrada();
-		entradaDao = new EntradaDao();
+		entradaDao = new EntradaDao();		
 	}
 
 	public Entrada getEntradaEdicao() {
@@ -47,7 +48,7 @@ public class EntradaBean implements Serializable{
 
 	public void setEntradaSelecao(Entrada entradaSelecao) {
 		this.entradaSelecao = entradaSelecao;
-	}
+	}	
 
 	public List<Entrada> getTodasEntradas() {
 		todasEntradas = entradaDao.todasEntradas();
@@ -64,53 +65,53 @@ public class EntradaBean implements Serializable{
 
 	public void setEntradaDao(EntradaDao entradaDao) {
 		this.entradaDao = entradaDao;
-	}
-	
+	}	
+
 	public void preparaCadastro() {
 		entradaEdicao = new Entrada();
-		entradaSelecao = new Entrada();
-		entradaDao = new EntradaDao();
+		entradaSelecao = new Entrada();	
+		entradaDao = new EntradaDao();		
 	}
-	
+
 	public void salvar() {
 		FacesContext fc = FacesContext.getCurrentInstance();
 		RequestContext rc = RequestContext.getCurrentInstance();
-		
+
 		try {
 			entradaDao.create(entradaEdicao);
-			todasEntradas = entradaDao.todasEntradas();
+			todasEntradas = entradaDao.todasEntradas();			
 			rc.execute("PF('janelaCadastro').hide()");
 			fc.addMessage("formMembro", new FacesMessage("Entrada Cadastrada Com Sucesso"));
-			
+
 		} catch (Exception e) {
 			fc.addMessage("formMembro", new FacesMessage("Erro!" + e.getMessage()));
 		}
 	}
-	
+
 	public void editar() {
 		FacesContext fc = FacesContext.getCurrentInstance();
-				
+
 		try {
 			entradaDao.update(entradaEdicao);
-			todasEntradas = entradaDao.todasEntradas();
+			todasEntradas = entradaDao.todasEntradas();				
 			fc.addMessage("formMembro", new FacesMessage("Entrada Atualizada Com Sucesso"));
-			
+
 		} catch (Exception e) {
 			fc.addMessage("formMembro", new FacesMessage("Erro!" + e.getMessage()));
 		}
 	}
-	
+
 	public void remover() {
 		FacesContext fc = FacesContext.getCurrentInstance();
-		
+
 		try {
 			entradaDao.delete(entradaSelecao);
-			todasEntradas = entradaDao.todasEntradas();
+			todasEntradas = entradaDao.todasEntradas();		
 			fc.addMessage("formMembro", new FacesMessage("Entrada Removida Com Sucesso"));
-			
+
 		} catch (Exception e) {
 			fc.addMessage("formMembro", new FacesMessage("Erro!" + e.getMessage()));
 		}
-	}	
+	}
 
 }

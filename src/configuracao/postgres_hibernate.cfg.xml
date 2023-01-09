@@ -9,7 +9,7 @@
     <property name="hibernate.connection.password">1234</property>
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.format_sql">true</property>
-    <!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
+    <!-- <property name="hibernate.hbm2ddl.auto">update</property>  -->
     <mapping class="modelo.Bem"/>
     <mapping class="modelo.Usuario"/>
     <mapping class="modelo.Membro"/>
@@ -18,6 +18,6 @@
     <mapping class="modelo.Nota"/> 
     <mapping class="modelo.Servico"/> 
     <mapping class="modelo.Saida"/> 
-    <mapping class="modelo.Entrada"/>  
+    <mapping class="modelo.Entrada"/> 
   </session-factory>
 </hibernate-configuration>

@@ -57,5 +57,13 @@ public class EntradaDao {
 			session.close();
 		return lista;
 	}
+	
+	public Double somaEntradas(){
+		session = HibernateUtil.getSessionFactory().openSession();
+			query = session.createQuery("select sum(valorEntrada) from Entrada");
+			Double soma = (Double) query.uniqueResult();
+		return soma;
+			
+	}
 
 }
